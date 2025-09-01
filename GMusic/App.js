@@ -15,11 +15,42 @@ export default function App() {
           style={styles.musicImage}/>
         </View>
 
-        <View>
-          <Slider></Slider>
+      <View>
+        <Text style={[styles.songContent, styles.songTitle]}>
+          Título da Música
+        </Text>
+        <Text style={[styles.songContent, styles.songArtist]}>
+          Autor da Música
+        </Text>
+      </View>
+
+      <View>
+        <Slider 
+          style={styles.progressBar}
+          value={10}
+          minimumValue={0}
+          maximumValue={100}
+          thumbTintColor='#FFD369'
+          minimumTrackTintColor='#FFD369'
+          maximumTrackTintColor='#fff'
+        />
+        <View style={[styles.progressLevelDuration]}>
+          <Text style={[styles.progressLabelText]}>00:00</Text>
+          <Text style={[styles.progressLabelText]}>00:00</Text>
         </View>
+      </View>
 
-
+      <View style={styles.musicControlContainer}>
+        <TouchableOpacity>
+          <Ionicons name='play-skip-back-outline' size={35} color='#FFD369'></Ionicons>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name='pause-circle' size={75} color='#FFD369'></Ionicons>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name='play-skip-forward-outline' size={35} color='#FFD369'></Ionicons>
+        </TouchableOpacity>
+      </View>
 
       </View>
       <View style={styles.footer}>
@@ -86,5 +117,37 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 15
+  },
+  songContent: {
+    textAlign: 'center',
+    color: '#EEEEEE',
+  },
+  songTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  songArtist: {
+    fontSize: 16,
+    fontWeight: '300',
+  },
+  progressBar: {
+    width: 350,
+    height: 40,
+    marginTop: 20,
+  },
+  progressLevelDuration: {
+    width: 340,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  progressLabelText: {
+    color: '#FFF',
+    fontWeight: '500',
+  },
+  musicControlContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '60%'
   },
 });
