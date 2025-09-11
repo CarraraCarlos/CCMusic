@@ -1,26 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Animated, Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Slider from '@react-native-community/slider'
+import Slider from '@react-native-community/slider';
+import songs from "./model/data";
 
 const { width, height } = Dimensions.get('window');
 
 export default function App() {
+  const[sound, setSound] = useState(Null);
+  const[songIndex, setSongIndex] = useState(0);
+  const[songStatus, setSongsStatus] = useState(null);
+  const[isPlaying, setIsPlaying] = useState(false);
+  const[isLooping, setIsLooping] = useState(false);
+
+  const songSlider = useRef(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+useEffect(() => {
+  scrollX.addListener(({value}) => {
+    //console.log(`ScrollX : ${value}`)
+    //console.log(index)
+    const index = Math.round(value / width)
+    setSongIndex(index);
+  });
+},  []);
+
+  const renderSongs = ({item, index}) => {
+    return (
+      <View style={styles.mainImageWrapper}>
+        <View style={[styles.imageWrapper, styles.elevation]}>
+          <Image source={item.artwork} style={styles.musicImage}/>
+        </View>
+      </View>
+    )
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.main}>
-        <View style={[styles.imageWrapper, styles.elevation]}>
-          <Image source={require('./assets/img/gallo.png')}
-          style={styles.musicImage}/>
-        </View>
+
+        <Animated.FlatList
+        data={songs}
+        keyExtractor={item => item.id}
+        renderItem={renderSongs}
+        horizontal
+        pagingEnabled
+        showHorizontalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffSet: { x : scrollX },
+              }
+            }
+          ],
+          { useNativeDriver: true }
+        )}
+        />
 
       <View>
         <Text style={[styles.songContent, styles.songTitle]}>
-          Título da Música
+          {songs[songIndex].title}
         </Text>
         <Text style={[styles.songContent, styles.songArtist]}>
-          Autor da Música
+          {songs[songIndex].artist}
         </Text>
       </View>
 
@@ -33,6 +78,7 @@ export default function App() {
           thumbTintColor='#FFD369'
           minimumTrackTintColor='#FFD369'
           maximumTrackTintColor='#fff'
+          onSlidingComplete={() => { }}
         />
         <View style={[styles.progressLevelDuration]}>
           <Text style={[styles.progressLabelText]}>00:00</Text>
@@ -80,6 +126,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#222831',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  mainImageWrapper : {
+    width: width,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   main: {
     flex: 1,
