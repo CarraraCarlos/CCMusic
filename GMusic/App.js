@@ -107,7 +107,13 @@ export default function App() {
   }
 
   const updatePosition = async () => {
-
+    if (sound && isPlaying) {
+      const status = await sound.getStatusAsync();
+      setSongStatus(status);
+      if (status.positionMillis == status.durationMillis) {
+        if (!isLooping) await stop();
+      }
+    }
   }
 
   useEffect(() => {
@@ -158,11 +164,17 @@ export default function App() {
             thumbTintColor='#FFD369'
             minimumTrackTintColor='#FFD369'
             maximumTrackTintColor='#fff'
-            onSlidingComplete={() => { }}
+            onSlidingComplete={(value) => {
+              sound.setPositionAsync(value);
+             }}
           />
           <View style={styles.progressLevelDuration}>
-            <Text style={styles.progressLabelText}>00:00</Text>
-            <Text style={styles.progressLabelText}>00:00</Text>
+            <Text style={styles.progressLabelText}>
+              {songStatus ? `${Math.floor(songStatus.positionMillis / 1000 / 60)}:${String(Math.floor((songStatus.positionMillis / 1000) % 60)).padStart(2, "0")}` : "00:00"}
+            </Text>
+            <Text style={styles.progressLabelText}>
+              {songStatus ? `${Math.floor(songStatus.durationMillis / 1000 / 60)}:${String(Math.floor((songStatus.durationMillis / 1000) % 60)).padStart(2, "0")}` : "00:00"}
+            </Text>
           </View>
         </View>
 
@@ -184,8 +196,8 @@ export default function App() {
           <TouchableOpacity>
             <Ionicons name='heart-outline' size={30} color="#888888" />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Ionicons name='repeat' size={30} color="#888888" />
+          <TouchableOpacity onPress={() => {repeat(!isLooping) }}>
+            <Ionicons name='repeat' size={30} color={isLooping ? "#ffffff" : "#888888"} />
           </TouchableOpacity>
           <TouchableOpacity>
             <Ionicons name='share-outline' size={30} color="#888888" />
@@ -221,6 +233,7 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
     borderTopColor: '#393E45',
     borderTopWidth: 1,
+    marginBottom: 20,
   },
   iconWrapper: {
     flexDirection: 'row',
